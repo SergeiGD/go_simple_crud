@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./build/app/Dockerfile
+    container_name: go_app
+    restart: on-failure
+    ports:
+      - "8081:8080"
+    depends_on:
+      - migrate
+    env_file:
+      - ./.env
+    networks:
+      - internal
+
+  db:
+    image: postgres:latest
+    container_name: go_db
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      PGPORT: ${DB_PORT}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    env_file:
+      - ./.env
+    networks:
+      - internal
+
+  migrate:
+    build:
+        context: .
+        dockerfile: ./build/migrations/Dockerfile
+    container_name: go_migrate
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    networks:
+      - internal
+
+networks:
+  internal:

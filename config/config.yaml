@@ -1,0 +1,6 @@
+is_debug: True
+
+database:
+  max_attemps: 5
+  timeout: 5
+  conn_delay: 5
