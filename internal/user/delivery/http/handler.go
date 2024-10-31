@@ -1,20 +1,21 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 	"simple_rest_crud/internal/user/domain/entity"
 	"simple_rest_crud/internal/user/domain/service"
+	"simple_rest_crud/pkg/logging"
 
 	"github.com/gin-gonic/gin"
 )
 
 type userHandlers struct {
 	service *service.UserService
+	logger  *logging.Logger
 }
 
-func NewUserHandler(service *service.UserService) *userHandlers {
-	return &userHandlers{service}
+func NewUserHandler(service *service.UserService, logger *logging.Logger) *userHandlers {
+	return &userHandlers{service, logger}
 }
 
 func (h *userHandlers) HelloWorld(c *gin.Context) {
@@ -26,7 +27,7 @@ func (h *userHandlers) HelloWorld(c *gin.Context) {
 func (h *userHandlers) GetUserByID(c *gin.Context) {
 	var uri GetUserByIDDOT
 	if err := c.ShouldBindUri(&uri); err != nil {
-		fmt.Println(err)
+		h.logger.Info(err)
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
 		return
 	}
@@ -49,7 +50,7 @@ func (h *userHandlers) GetUserByID(c *gin.Context) {
 func (h *userHandlers) CreateUser(c *gin.Context) {
 	var userData CreateUserDOT
 	if err := c.ShouldBindJSON(&userData); err != nil {
-		fmt.Println(err)
+		h.logger.Info(err)
 		c.JSON(http.StatusBadRequest, gin.H{"msg": err.Error()})
 		return
 	}

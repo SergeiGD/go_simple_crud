@@ -1,10 +1,11 @@
 package config
 
 import (
-	"fmt"
+	"simple_rest_crud/pkg/logging"
 	"sync"
 
 	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/sirupsen/logrus"
 )
 
 type Config struct {
@@ -26,7 +27,7 @@ type PgConfig struct {
 	ConnDelay  int    `yaml:"conn_delay"`
 }
 
-func GetConfig() (*Config, error) {
+func GetConfig(logger *logging.Logger) (*Config, error) {
 
 	var (
 		once sync.Once
@@ -35,8 +36,7 @@ func GetConfig() (*Config, error) {
 	)
 
 	once.Do(func() {
-		// TODO: logger
-		fmt.Println("read application configuration")
+		logger.WithFields(logrus.Fields{}).Info("reading app conf")
 
 		cfg = &Config{}
 		err = cleanenv.ReadConfig("config.yaml", cfg)

@@ -8,8 +8,10 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sirupsen/logrus"
 
 	"simple_rest_crud/config"
+	"simple_rest_crud/pkg/logging"
 	"simple_rest_crud/pkg/utils"
 )
 
@@ -20,9 +22,11 @@ type Client interface {
 	Begin(ctx context.Context) (pgx.Tx, error)
 }
 
-func NewClient(ctx context.Context, pgConf config.PgConfig) (*pgxpool.Pool, error) {
+func NewClient(ctx context.Context, logger *logging.Logger, pgConf config.PgConfig) (*pgxpool.Pool, error) {
 	dns := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", pgConf.Username, pgConf.Password, pgConf.Host, pgConf.Port, pgConf.Database)
-	fmt.Println(dns)
+	logger.WithFields(logrus.Fields{
+		"dns": dns,
+	}).Info("trying to connect to psql")
 
 	var pool *pgxpool.Pool
 	var err error
@@ -42,8 +46,10 @@ func NewClient(ctx context.Context, pgConf config.PgConfig) (*pgxpool.Pool, erro
 	}, pgConf.MaxAttemps, time.Duration(pgConf.ConnDelay)*time.Second)
 
 	if err != nil {
-		// TODO: logger
-		return nil, fmt.Errorf("error connecting to DB")
+		logger.WithFields(logrus.Fields{
+			"error": err.Error(),
+		}).Fatal("error connecting to DB")
+		return nil, err
 	}
 
 	return pool, nil
