@@ -40,5 +40,5 @@ func GetUserRepo() iRepo.IUserRepository {
 }
 
 func GetUserService() *service.UserService {
-	return service.NewUserService(GetUserRepo())
+	return service.NewUserService(GetUserRepo(), getConfig())
 }

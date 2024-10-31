@@ -1,6 +1,10 @@
 package utils
 
-import "time"
+import (
+	"crypto/sha512"
+	"encoding/hex"
+	"time"
+)
 
 func DoWithAttemps(fn func() error, maxAttemps int, delay time.Duration) error {
 	var err error
@@ -16,4 +20,13 @@ func DoWithAttemps(fn func() error, maxAttemps int, delay time.Duration) error {
 	}
 
 	return err
+}
+
+func HashValue(value []byte, salt []byte) string {
+	rawBytes := append(value, salt...)
+	hasher := sha512.New()
+	hasher.Write(rawBytes)
+	hashedBytes := hasher.Sum(nil)
+	hashedHex := hex.EncodeToString(hashedBytes)
+	return hashedHex
 }

@@ -10,6 +10,9 @@ import (
 type Config struct {
 	IsDebug  *bool    `yaml:"is_debug" env-required:"true"`
 	Database PgConfig `yaml:"database"`
+	Auth     struct {
+		SaltLenth int `yaml:"salt_length"`
+	} `yaml:"auth"`
 }
 
 type PgConfig struct {

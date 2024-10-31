@@ -4,3 +4,7 @@ database:
   max_attemps: 5
   timeout: 5
   conn_delay: 5
+
+auth:
+  salt_length: 32
+  
