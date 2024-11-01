@@ -24,6 +24,15 @@ func (h *userHandlers) HelloWorld(c *gin.Context) {
 	})
 }
 
+// GetUserByID godoc
+// @Summary      Get user by id
+// @Description  Get user by id
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "User ID"
+// @Success      200  {object}  entity.UserDetailEntity
+// @Router       /users/{id} 	[get]
 func (h *userHandlers) GetUserByID(c *gin.Context) {
 	var uri GetUserByIDDOT
 	if err := c.ShouldBindUri(&uri); err != nil {
@@ -47,6 +56,15 @@ func (h *userHandlers) GetUserByID(c *gin.Context) {
 
 }
 
+// CreateUser godoc
+// @Summary			Create user
+// @Description		Create user
+// @Tags         	users
+// @Accept       	json
+// @Produce      	json
+// @Param   		createUserRequest	body	entity.UserDetailEntity	true	"username email password"
+// @Success      	200 				{integer}	int	"user id"
+// @Router       	/users/				[post]
 func (h *userHandlers) CreateUser(c *gin.Context) {
 	var userData CreateUserDOT
 	if err := c.ShouldBindJSON(&userData); err != nil {
